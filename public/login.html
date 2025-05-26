@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>로그인</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h2>로그인</h2>
+    <div id="login-form">
+      <input type="text" id="loginid" placeholder="아이디 입력" /><br /><br />
+      <input
+        type="password"
+        id="loginpassword"
+        placeholder="비밀번호 입력"
+      /><br /><br />
+      <button onclick="login()">로그인</button>
+      <p>
+        아직 회원이 아니라면?
+        <a href="signup.html">회원가입 하러가기</a>
+      </p>
+    </div>
+    <script>
+      function login() {
+        var id = document.getElementById("loginid").value;
+        var password = document.getElementById("loginpassword").value;
+        if (!id || !password) {
+          alert("아이디와 비밀번호를 입력하세요!");
+          return;
+        }
+        // 서버로 로그인 요청 보내기
+        fetch("http://localhost:3000/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: id, password: password }),
+        })
+          .then(function (res) {
+            return res.json();
+          })
+          .then(function (result) {
+            if (result.result) {
+              alert("로그인 성공!");
+              window.location.href = "pyramid.html";
+            } else {
+              alert("아이디 또는 비밀번호가 틀렸습니다.");
+            }
+          })
+          .catch(function (error) {
+            alert("서버와 연결할 수 없습니다.");
+          });
+      }
+    </script>
+  </body>
+</html>

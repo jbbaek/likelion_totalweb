@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>멋사 과제</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <input type="text" id="heightinput" placeholder="숫자를 입력하세요" />
+    <button onclick="makePyramid()">피라미드 만들기</button>
+    <hr />
+    <div id="pyramid"></div>
+    <script>
+      function makePyramid() {
+        // 입력값 읽어오기
+        var heightvalue = document.getElementById("heightinput");
+        var heightnumber = parseInt(heightvalue.value);
+
+        // 숫자 아닌 경우 예외처리
+        if (isNaN(heightnumber) || heightnumber < 1) {
+          document.getElementById("pyramid").innerHTML =
+            "1 이상의 숫자를 입력하세요.";
+          return;
+        }
+
+        // 피라미드 만들기
+        var result = "";
+        for (var i = 0; i < heightnumber; i++) {
+          // 공백 추가
+          for (var j = 0; j < heightnumber - i - 1; j++) {
+            result += "&nbsp;";
+          }
+          // 별(*) 추가
+          for (var k = 0; k < 2 * i + 1; k++) {
+            result += "*";
+          }
+          result += "<br>";
+        }
+        // 결과 표시
+        document.getElementById("pyramid").innerHTML = result;
+      }
+    </script>
+  </body>
+</html>

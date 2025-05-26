@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>멋사 과제 - 회원가입</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h2>회원가입</h2>
+    <input type="text" id="id" placeholder="아이디 입력" />
+    <button onclick="checkId()">중복확인</button><br /><br />
+    <input
+      type="password"
+      id="password"
+      placeholder="비밀번호 입력"
+    /><br /><br />
+    <button onclick="signup()">회원가입</button>
+    <!-- 아이디 중복확인 결과 메시지 표시 영역 -->
+    <div id="check-result"></div>
+    <script>
+      // 아이디 중복확인 결과 저장 변수
+      var idChecked = false;
+      var lastCheckedId = "";
+
+      function checkId() {
+        var id = document.getElementById("id").value;
+        if (!id) {
+          alert("아이디를 입력하세요!");
+          return;
+        }
+        // 서버에 중복확인 요청 보내기
+        fetch("http://localhost:3000/api/check-id", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: id }),
+        })
+          .then(function (res) {
+            return res.json();
+          })
+          // result.result가 true면 사용 가능
+          .then(function (result) {
+            if (result.result) {
+              document.getElementById("check-result").innerText =
+                "사용 가능한 아이디입니다.";
+              idChecked = true;
+              lastCheckedId = id;
+            } else {
+              document.getElementById("check-result").innerText =
+                "이미 존재하는 아이디입니다.";
+              idChecked = false;
+            }
+          })
+          .catch(function (error) {
+            alert("서버와 통신 중 오류가 발생했습니다.");
+          });
+      }
+
+      function signup() {
+        var id = document.getElementById("id").value;
+        var password = document.getElementById("password").value;
+
+        if (!id || !password) {
+          alert("아이디와 비밀번호를 모두 입력하세요!");
+          return;
+        }
+        if (!idChecked || lastCheckedId !== id) {
+          alert("아이디 중복확인을 해주세요!");
+          return;
+        }
+        // 서버에 회원가입 요청 보내기
+        fetch("http://localhost:3000/api/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: id, password: password }),
+        })
+          .then(function (res) {
+            return res.json();
+          })
+          .then(function (result) {
+            if (result.result) {
+              alert("회원가입 성공!");
+              window.location.href = "login.html";
+            } else {
+              alert("회원가입 실패(중복 또는 오류)");
+            }
+          })
+          .catch(function (error) {
+            alert("서버와 통신 중 오류가 발생했습니다.");
+          });
+      }
+    </script>
+  </body>
+</html>

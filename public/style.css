@@ -1,0 +1,105 @@
+.simple-box,
+.form-container,
+.square-box {
+  width: 350px;
+  min-height: 320px;
+  background: #fff;
+  border-radius: 22px;
+  border: 2.5px solid #a8caff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 36px 30px 32px 30px;
+  box-shadow: none;
+}
+
+h2,
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #26578a;
+  margin-bottom: 30px;
+  letter-spacing: -1px;
+}
+
+label,
+.form-label {
+  font-size: 1.03rem;
+  color: #222;
+  margin-bottom: 6px;
+  font-weight: 600;
+  margin-top: 18px;
+  align-self: flex-start;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="number"] {
+  color: #222;
+  font-size: 20px;
+  border-radius: 10px;
+  border: 1.6px solid #a8caff;
+  padding: 13px 12px;
+  margin-bottom: 18px;
+  width: 100%;
+  background: #fafdff;
+  box-sizing: border-box;
+  transition: border 0.15s;
+}
+input:focus {
+  border: 2px solid #64a0e8;
+  outline: none;
+}
+
+button {
+  color: #222;
+  background-color: skyblue;
+  border: 1.3px solid #5ba7e8;
+  border-radius: 30px;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 12px 0;
+  width: 100%;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-bottom: 8px;
+  transition: background 0.16s;
+}
+button:hover {
+  background-color: #3cb1e7;
+  color: #fff;
+}
+
+a {
+  color: #337ccf;
+  text-decoration: underline;
+  font-size: 0.99rem;
+  margin-top: 14px;
+}
+a:hover {
+  color: #1553a6;
+}
+
+#pyramid {
+  margin-top: 15px;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  line-height: 1.45;
+  text-align: center;
+  color: #b383ff;
+  min-height: 50px;
+  font-family: "Consolas", "monospace";
+}
+
+@media (max-width: 450px) {
+  .simple-box,
+  .form-container,
+  .square-box {
+    width: 96vw;
+    padding: 15px 3vw 14px 3vw;
+    min-height: 180px;
+    border-radius: 12px;
+  }
+}
