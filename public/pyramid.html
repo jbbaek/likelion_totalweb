@@ -5,6 +5,8 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <!-- 로그아웃 버튼 추가 -->
+    <button id="logout-btn" style="float: right; margin: 10px">로그아웃</button>
     <input type="text" id="heightinput" placeholder="숫자를 입력하세요" />
     <button onclick="makePyramid()">피라미드 만들기</button>
     <hr />
@@ -38,6 +40,26 @@
         // 결과 표시
         document.getElementById("pyramid").innerHTML = result;
       }
+
+      // 로그아웃 버튼 기능
+      document.getElementById("logout-btn").onclick = function () {
+        fetch("/api/logout", {
+          method: "POST",
+          credentials: "include",
+        })
+          .then(function (res) {
+            return res.json();
+          })
+          .then(function (result) {
+            if (result.result) {
+              alert("로그아웃 되었습니다.");
+              window.location.href = "login.html";
+            }
+          })
+          .catch(function (error) {
+            alert("서버와 연결할 수 없습니다.");
+          });
+      };
     </script>
   </body>
 </html>

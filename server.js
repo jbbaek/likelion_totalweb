@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const mysql = require("mysql2");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
+const session = require("express-session");
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -20,8 +21,36 @@ db.connect((err) => {
 });
 
 const app = express();
+
 app.use(bodyParser.json());
-app.use(cors()); // CORS 허용 (프론트-백 분리시 필요)
+
+// CORS 설정 (프론트가 다른 포트면 origin에 프론트 주소)
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
+
+//세션 쿠키 key를 'id'로 지정!
+app.use(
+  session({
+    name: "id", // ← 쿠키 key가 'id'로 나옴!
+    secret: "your-secret-key",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60, // 1시간
+    },
+  })
+);
+
+app.use(express.static("public"));
+
+app.get("/", (req, res) => {
+  res.redirect("/signup.html");
+});
 
 // 아이디 중복확인
 app.post("/api/check-id", (req, res) => {
@@ -37,9 +66,7 @@ app.post("/api/check-id", (req, res) => {
 app.post("/api/signup", async (req, res) => {
   const { id, password } = req.body;
   try {
-    // 1. 비밀번호 해시화
     const hashedPassword = await bcrypt.hash(password, 10);
-    // 2. DB 저장
     db.query(
       "INSERT INTO users (id, password) VALUES (?, ?)",
       [id, hashedPassword],
@@ -56,17 +83,16 @@ app.post("/api/signup", async (req, res) => {
   }
 });
 
-// 로그인
+// 로그인 (세션 쿠키 생성)
 app.post("/api/login", (req, res) => {
   const { id, password } = req.body;
   db.query("SELECT * FROM users WHERE id=?", [id], async (err, results) => {
     if (err) return res.status(500).json({ result: false, error: "DB오류" });
     if (results.length === 1) {
-      // 1. DB에 저장된 해시값 가져오기
       const user = results[0];
-      // 2. 입력 비밀번호와 해시값 비교
       const match = await bcrypt.compare(password, user.password);
       if (match) {
+        req.session.userId = user.id; // 세션 저장
         res.json({ result: true });
       } else {
         res.json({ result: false });
@@ -75,6 +101,22 @@ app.post("/api/login", (req, res) => {
       res.json({ result: false });
     }
   });
+});
+
+// 로그아웃 (세션 제거)
+app.post("/api/logout", (req, res) => {
+  req.session.destroy(() => {
+    res.json({ result: true });
+  });
+});
+
+// 세션 체크 API
+app.get("/api/check-session", (req, res) => {
+  if (req.session.userId) {
+    res.json({ loggedIn: true, userId: req.session.userId });
+  } else {
+    res.json({ loggedIn: false });
+  }
 });
 
 app.listen(3000, () => {

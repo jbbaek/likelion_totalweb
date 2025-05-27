@@ -27,17 +27,20 @@
           alert("아이디와 비밀번호를 입력하세요!");
           return;
         }
-        // 서버로 로그인 요청 보내기
         fetch("http://localhost:3000/api/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id: id, password: password }),
+          credentials: "include", // 세션 쿠키 사용
         })
           .then(function (res) {
             return res.json();
           })
           .then(function (result) {
             if (result.result) {
+              // localStorage, sessionStorage에 id 저장
+              localStorage.setItem("id", id);
+              sessionStorage.setItem("id", id);
               alert("로그인 성공!");
               window.location.href = "pyramid.html";
             } else {
