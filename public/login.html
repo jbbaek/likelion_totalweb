@@ -7,47 +7,64 @@
   <body>
     <h2>로그인</h2>
     <div id="login-form">
+      <!-- 아이디 입력창 -->
       <input type="text" id="loginid" placeholder="아이디 입력" /><br /><br />
+      <!-- 비밀번호 입력창 -->
       <input
         type="password"
         id="loginpassword"
         placeholder="비밀번호 입력"
       /><br /><br />
+      <!-- 로그인 버튼 -->
       <button onclick="login()">로그인</button>
       <p>
         아직 회원이 아니라면?
+        <!-- 회원가입 페이지로 이동하는 링크 -->
         <a href="signup.html">회원가입 하러가기</a>
       </p>
     </div>
     <script>
+      // 로그인 함수
       function login() {
+        // 입력한 아이디와 비밀번호 값 가져오기
         var id = document.getElementById("loginid").value;
         var password = document.getElementById("loginpassword").value;
+
+        // 아이디나 비밀번호가 비어 있으면 경고창 띄우고 함수 종료
         if (!id || !password) {
           alert("아이디와 비밀번호를 입력하세요!");
           return;
         }
+
+        // 서버로 로그인 요청 보내기 (POST 방식)
         fetch("http://localhost:3000/api/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: id, password: password }),
-          credentials: "include", // 세션 쿠키 사용
+          method: "POST", // POST 방식 사용
+          headers: { "Content-Type": "application/json" }, // JSON 형식으로 데이터 전송
+          body: JSON.stringify({ id: id, password: password }), // 아이디, 비밀번호 보냄
+          credentials: "include", // 세션 쿠키 포함시켜서 서버와 주고받기 (로그인 상태 유지)
         })
           .then(function (res) {
+            // 서버 응답을 JSON 형식으로 변환
             return res.json();
           })
           .then(function (result) {
             if (result.result) {
-              // localStorage, sessionStorage에 id 저장
-              localStorage.setItem("id", id);
-              sessionStorage.setItem("id", id);
+              // 로그인 성공 시
+
+              // 브라우저에 id를 저장 (localStorage와 sessionStorage 둘 다에 저장)
+              localStorage.setItem("id", id); // 탭/브라우저 종료해도 남아있음
+              sessionStorage.setItem("id", id); // 탭을 닫으면 사라짐
+
               alert("로그인 성공!");
+              // 피라미드 페이지로 이동
               window.location.href = "pyramid.html";
             } else {
+              // 로그인 실패 시 (아이디/비밀번호 틀림)
               alert("아이디 또는 비밀번호가 틀렸습니다.");
             }
           })
           .catch(function (error) {
+            // 서버 연결이 안되었을 때(네트워크 문제 등)
             alert("서버와 연결할 수 없습니다.");
           });
       }

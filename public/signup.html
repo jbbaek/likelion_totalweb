@@ -7,84 +7,102 @@
   </head>
   <body>
     <h2>회원가입</h2>
+    <!-- 아이디 입력창 -->
     <input type="text" id="id" placeholder="아이디 입력" />
+    <!-- 아이디 중복확인 버튼 -->
     <button onclick="checkId()">중복확인</button><br /><br />
+    <!-- 비밀번호 입력창 -->
     <input
       type="password"
       id="password"
       placeholder="비밀번호 입력"
     /><br /><br />
+    <!-- 회원가입 버튼 -->
     <button onclick="signup()">회원가입</button>
     <!-- 아이디 중복확인 결과 메시지 표시 영역 -->
     <div id="check-result"></div>
     <script>
-      // 아이디 중복확인 결과 저장 변수
+      // 아이디 중복확인 결과를 저장하는 변수 (중복확인 했는지 여부)
       var idChecked = false;
+      // 마지막으로 중복확인한 아이디 값
       var lastCheckedId = "";
 
+      // 아이디 중복확인 함수
       function checkId() {
+        // 입력창에서 아이디 값 가져오기
         var id = document.getElementById("id").value;
+        // 아이디가 비어 있으면 경고창 띄우고 함수 종료
         if (!id) {
           alert("아이디를 입력하세요!");
           return;
         }
-        // 서버에 중복확인 요청 보내기
+        // 서버로 POST 방식으로 아이디 중복확인 요청 보내기
         fetch("http://localhost:3000/api/check-id", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: id }),
+          method: "POST", // POST 방식 사용
+          headers: { "Content-Type": "application/json" }, // 요청 타입 JSON
+          body: JSON.stringify({ id: id }), // 보낼 데이터 (아이디만)
         })
           .then(function (res) {
-            return res.json();
+            return res.json(); // 응답을 JSON 형식으로 파싱
           })
-          // result.result가 true면 사용 가능
+          // result.result가 true면 사용 가능한 아이디, false면 이미 존재
           .then(function (result) {
             if (result.result) {
+              // 사용 가능
               document.getElementById("check-result").innerText =
                 "사용 가능한 아이디입니다.";
-              idChecked = true;
-              lastCheckedId = id;
+              idChecked = true; // 중복확인 통과 상태로 변경
+              lastCheckedId = id; // 최근 확인한 아이디로 저장
             } else {
+              // 이미 존재
               document.getElementById("check-result").innerText =
                 "이미 존재하는 아이디입니다.";
-              idChecked = false;
+              idChecked = false; // 중복확인 실패 상태로 변경
             }
           })
           .catch(function (error) {
+            // 서버와 통신이 안될 때
             alert("서버와 통신 중 오류가 발생했습니다.");
           });
       }
 
+      // 회원가입 함수
       function signup() {
+        // 입력값 읽어오기
         var id = document.getElementById("id").value;
         var password = document.getElementById("password").value;
 
+        // 입력값이 비어 있으면 경고 후 종료
         if (!id || !password) {
           alert("아이디와 비밀번호를 모두 입력하세요!");
           return;
         }
+        // 아이디를 중복확인하지 않았거나, 중복확인 이후에 id를 바꾼 경우 경고
         if (!idChecked || lastCheckedId !== id) {
           alert("아이디 중복확인을 해주세요!");
           return;
         }
-        // 서버에 회원가입 요청 보내기
+        // 서버로 회원가입 요청 (POST 방식)
         fetch("http://localhost:3000/api/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: id, password: password }),
+          method: "POST", // POST 방식
+          headers: { "Content-Type": "application/json" }, // 요청 타입 JSON
+          body: JSON.stringify({ id: id, password: password }), // 아이디와 비밀번호 전송
         })
           .then(function (res) {
-            return res.json();
+            return res.json(); // 응답을 JSON 형식으로 파싱
           })
           .then(function (result) {
             if (result.result) {
+              // 회원가입 성공 시
               alert("회원가입 성공!");
-              window.location.href = "login.html";
+              window.location.href = "login.html"; // 로그인 페이지로 이동
             } else {
+              // 회원가입 실패(중복 가입 또는 DB 오류)
               alert("회원가입 실패(중복 또는 오류)");
             }
           })
           .catch(function (error) {
+            // 서버와 통신 오류 발생 시
             alert("서버와 통신 중 오류가 발생했습니다.");
           });
       }
