@@ -7,19 +7,14 @@
   </head>
   <body>
     <h2>회원가입</h2>
-    <!-- 아이디 입력창 -->
     <input type="text" id="id" placeholder="아이디 입력" />
-    <!-- 아이디 중복확인 버튼 -->
     <button onclick="checkId()">중복확인</button><br /><br />
-    <!-- 비밀번호 입력창 -->
     <input
       type="password"
       id="password"
       placeholder="비밀번호 입력"
     /><br /><br />
-    <!-- 회원가입 버튼 -->
     <button onclick="signup()">회원가입</button>
-    <!-- 아이디 중복확인 결과 메시지 표시 영역 -->
     <div id="check-result"></div>
     <script>
       // 아이디 중복확인 결과를 저장하는 변수 (중복확인 했는지 여부)
@@ -38,12 +33,12 @@
         }
         // 서버로 POST 방식으로 아이디 중복확인 요청 보내기
         fetch("http://localhost:3000/api/check-id", {
-          method: "POST", // POST 방식 사용
-          headers: { "Content-Type": "application/json" }, // 요청 타입 JSON
-          body: JSON.stringify({ id: id }), // 보낼 데이터 (아이디만)
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: id }),
         })
           .then(function (res) {
-            return res.json(); // 응답을 JSON 형식으로 파싱
+            return res.json();
           })
           // result.result가 true면 사용 가능한 아이디, false면 이미 존재
           .then(function (result) {
@@ -68,7 +63,6 @@
 
       // 회원가입 함수
       function signup() {
-        // 입력값 읽어오기
         var id = document.getElementById("id").value;
         var password = document.getElementById("password").value;
 
@@ -84,18 +78,18 @@
         }
         // 서버로 회원가입 요청 (POST 방식)
         fetch("http://localhost:3000/api/signup", {
-          method: "POST", // POST 방식
-          headers: { "Content-Type": "application/json" }, // 요청 타입 JSON
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id: id, password: password }), // 아이디와 비밀번호 전송
         })
           .then(function (res) {
-            return res.json(); // 응답을 JSON 형식으로 파싱
+            return res.json();
           })
           .then(function (result) {
             if (result.result) {
               // 회원가입 성공 시
               alert("회원가입 성공!");
-              window.location.href = "login.html"; // 로그인 페이지로 이동
+              window.location.href = "login.html";
             } else {
               // 회원가입 실패(중복 가입 또는 DB 오류)
               alert("회원가입 실패(중복 또는 오류)");
