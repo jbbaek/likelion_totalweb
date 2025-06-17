@@ -7,11 +7,14 @@ const bcrypt = require("bcrypt"); // 비밀번호 해시/검증용
 const session = require("express-session"); // 세션 관리
 
 // MySQL 데이터베이스 연결 생성
+require("dotenv").config();
+const mysql = require("mysql2/promise");
+
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "manager",
-  password: "1234",
-  database: "users",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 // MySQL 서버와 연결 시도
@@ -37,14 +40,10 @@ app.use(
 // ★ express-session 사용: 로그인/로그아웃 상태를 서버가 세션 쿠키로 기억
 app.use(
   session({
-    name: "id", // 쿠키 key를 'id'로 지정 (브라우저 쿠키 key에 표시됨)
-    secret: "your-secret-key",
+    secret: process.env.SESSION_SECRET,
     resave: false, // 세션을 매 요청마다 저장할지(변경될 때만 저장)
     saveUninitialized: true, // 세션이 변경되지 않아도 저장할지(비추천, 실습용은 OK)
-    cookie: {
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60, // 쿠키 유효시간 (1시간)
-    },
+    cookie: { secure: false },
   })
 );
 
